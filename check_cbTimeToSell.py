@@ -46,7 +46,7 @@ outcome = float(sell["total"]["amount"])
 # Last but not least:
 # Comparing the sell reward with the desired sell reward.
 # CRITICAL if desired reward (outcome) is reached
-# OK if not
+# OK if its not reached yet
 if outcome > receiveMoneyWish:
     print("Your desired target outcome is reached! Time to sell! | outcome="+str(outcome))
     sys.exit(2)

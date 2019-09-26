@@ -16,10 +16,36 @@ args = vars(parser.parse_args())
 
 api_key = args["key"]
 api_secret = args["secret"]
-targetPaymentMethod = args["outcomeMethod"]
+targetOutcomeMethod = args["outcomeMethod"]
 targetCurrency = args["currencyToSell"]
-targetBuyCurrencyWallet = args["accountWallet"]
-investMoney = args["outcome"]
-targetAmountToBuy = args["trade"]
+targetSellCurrencyWallet = args["accountWallet"]
+receiveMoneyWish = args["outcome"]
+targetAmountToSell = args["trade"]
 
+# Create Connection Client client
+client = Client(api_key, api_secret)
 
+# Get all payment methods and accounts
+accounts = client.get_accounts()
+pms = client.get_payment_methods()
+
+for method in pms.data:
+    if method['name'] == targetOutcomeMethod:
+        paymentID = method['id']
+
+for account in accounts.data:
+    if account['name'] == targetSellCurrencyWallet:
+        accountID = account['id']
+
+# Creating the sell order the arguments quote and commit are used to create only a preview
+# Order can not be executed this way
+# The current outcome you would receive is stored to outcome variable
+sell = client.sell(accountID,commit="false",amount=targetAmountToSell, currency=targetCurrency, payment_method=paymentID, quote="true")
+outcome = sell["total"]["amount"]
+
+if outcome >= receiveMoneyWish:
+    print("Your desired target outcome is reached! Time to sell! | outcome="+outcome)
+    sys.exit(2)
+else:
+    print("Your desired target outcome is not reached yet. Keep waiting! | outcome="+outcome)
+    sys.exit(0)

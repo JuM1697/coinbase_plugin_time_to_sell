@@ -19,7 +19,7 @@ api_secret = args["secret"]
 targetOutcomeMethod = args["outcomeMethod"]
 targetCurrency = args["currencyToSell"]
 targetSellCurrencyWallet = args["accountWallet"]
-receiveMoneyWish = args["outcome"]
+receiveMoneyWish = float(args["outcome"])
 targetAmountToSell = args["trade"]
 
 # Create Connection Client client
@@ -41,11 +41,15 @@ for account in accounts.data:
 # Order can not be executed this way
 # The current outcome you would receive is stored to outcome variable
 sell = client.sell(accountID,commit="false",amount=targetAmountToSell, currency=targetCurrency, payment_method=paymentID, quote="true")
-outcome = sell["total"]["amount"]
+outcome = float(sell["total"]["amount"])
 
-if outcome >= receiveMoneyWish:
-    print("Your desired target outcome is reached! Time to sell! | outcome="+outcome)
+# Last but not least:
+# Comparing the sell reward with the desired sell reward.
+# CRITICAL if desired reward (outcome) is reached
+# OK if not
+if outcome > receiveMoneyWish:
+    print("Your desired target outcome is reached! Time to sell! | outcome="+str(outcome))
     sys.exit(2)
 else:
-    print("Your desired target outcome is not reached yet. Keep waiting! | outcome="+outcome)
+    print("Your desired target outcome is not reached yet. Keep waiting! | outcome="+str(outcome))
     sys.exit(0)
